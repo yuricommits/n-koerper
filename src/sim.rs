@@ -7,6 +7,14 @@ pub struct Simulation {
     pub bodies: Vec<Body>,
 }
 
+/*
+The orbital velocity calculation:
+v = sqrt(G * M / r)
+v = sqrt(6.674e-11 * 5e13 / 0.05)
+v = sqrt(66740)
+v ≈ 258
+ */
+
 impl Simulation {
     pub fn new() -> Self {
         Self {
