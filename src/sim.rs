@@ -1,7 +1,8 @@
 use crate::body::Body;
+use rand::RngExt;
 
 const G: f64 = 6.674e-11;
-const SOFTENING: f64 = 1e-4; // prevent infinite force when bodies overlap
+const SOFTENING: f64 = 1e-3; // prevent infinite force when bodies overlap
 
 pub struct Simulation {
     pub bodies: Vec<Body>,
@@ -17,13 +18,36 @@ v ≈ 258
 
 impl Simulation {
     pub fn new() -> Self {
-        Self {
-            bodies: vec![
-                Body::new(0.0, 0.05, 258.0, 0.0, 1e12),
-                Body::new(0.0, -0.05, -258.0, 0.0, 1e12),
-                Body::new(0.0, 0.0, 0.0, 0.0, 5e13),
-            ],
+        let mut rng = rand::rng();
+        let central_mass: f64 = rng.random_range(1e13..1e14); // Randomize the central heavy mass: 1×10¹³ → 1×10¹⁴
+        let n_orbiting: usize = rng.random_range(2..=10); // Randomize number of orbiting bodies: 2–10
+        let mut bodies = vec![Body::new(0.0, 0.0, 0.0, 0.0, central_mass, [0.6, 0.0, 1.0])];
+
+        for _ in 0..n_orbiting {
+            let r: f64 = rng.random_range(0.03..0.18); // random distance from center
+            let angle: f64 = rng.random_range(0.0..std::f64::consts::TAU); // random position on that orbit ring
+            let x = r * angle.cos(); // polar → cartesian
+            let y = r * angle.sin();
+
+            let v = (G * central_mass / r).sqrt(); // same orbital formula, but M and r vary
+
+            let direction: f64 = if rng.random_bool(0.5) { 1.0 } else { -1.0 };
+            let vx = -direction * v * angle.sin(); // tangent to the orbit at this angle
+            let vy = direction * v * angle.cos();
+
+            let vx = vx + rng.random_range(-5.0..5.0); // Small random perturbation so orbits aren't perfectly stable
+            let vy = vy + rng.random_range(-5.0..5.0);
+
+            let mass: f64 = rng.random_range(1e11..5e12); // // Random small mass: 1×10¹¹ → 5×10¹²
+
+            let color = [
+                rng.random_range(0.4..1.0_f32),
+                rng.random_range(0.4..1.0_f32),
+                rng.random_range(0.4..1.0_f32),
+            ];
+            bodies.push(Body::new(x, y, vx, vy, mass, color));
         }
+        Self { bodies }
     }
     pub fn step(&mut self, dt: f64) {
         let n = self.bodies.len();
