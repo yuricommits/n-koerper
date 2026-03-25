@@ -9,9 +9,8 @@ fn main() {
     let mut renderer = Renderer::new();
 
     while renderer.is_open() {
-        for _ in 0..10 {
-            // multiple sim steps per frame
-            sim.step(0.0001);
+        for _ in 0..100 {
+            sim.step(0.000001); // 100 × smaller dt = same time, far more stable
         }
         renderer.draw(&sim.bodies);
     }
