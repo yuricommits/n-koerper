@@ -23,6 +23,48 @@ impl Renderer {
         self.window.is_open() && !self.window.is_key_down(Key::Escape)
     }
 
+    fn draw_grid(&mut self, com_x: f64, com_y: f64, view_scale: f64) {
+        // Pick a fixed spacing that gives 4–10 lines on screen
+        // Snap to nearest power of 10 so labels stay clean
+        let raw_spacing = view_scale / 5.0;
+        let magnitude = raw_spacing.log10().floor();
+        let grid_spacing = 10f64.powf(magnitude); // snaps to 0.001, 0.01, 0.1, 1.0, etc.
+
+        let axis_color = 0x00_55_55_55u32;
+        let grid_color = 0x00_22_22_22u32;
+
+        // find first grid line left of screen, step right
+        let start_x = ((-(view_scale)) / grid_spacing).floor() as i32;
+        let end_x = ((view_scale) / grid_spacing).ceil() as i32;
+
+        for i in start_x..=end_x {
+            let world_x = i as f64 * grid_spacing;
+            let (sx, _) = world_to_screen(world_x - com_x, 0.0, view_scale);
+            let color = if i == 0 { axis_color } else { grid_color };
+            for y in 0..HEIGHT as i32 {
+                self.draw_pixel(sx, y, color);
+            }
+        }
+
+        let start_y = (-(view_scale) / grid_spacing).floor() as i32; // negative first
+        let end_y = ((view_scale) / grid_spacing).ceil() as i32; // positive last
+
+        for i in start_y..=end_y {
+            let world_y = i as f64 * grid_spacing;
+            let (_, sy) = world_to_screen(0.0, world_y - com_y, view_scale); // ← (_, sy)
+            let color = if i == 0 { axis_color } else { grid_color };
+            for x in 0..WIDTH as i32 {
+                self.draw_pixel(x, sy, color); // ← draw_pixel(x, sy)
+            }
+        }
+    }
+
+    fn draw_pixel(&mut self, x: i32, y: i32, color: u32) {
+        if x >= 0 && y >= 0 && (x as usize) < WIDTH && (y as usize) < HEIGHT {
+            self.buffer[y as usize * WIDTH + x as usize] = color;
+        }
+    }
+
     pub fn draw(&mut self, bodies: &[Body]) {
         self.buffer.fill(0);
 
@@ -30,17 +72,19 @@ impl Renderer {
         let com_x: f64 = bodies.iter().map(|b| b.pos[0] * b.mass).sum::<f64>() / total_mass;
         let com_y: f64 = bodies.iter().map(|b| b.pos[1] * b.mass).sum::<f64>() / total_mass;
 
-        // Auto-scale: fit the furthest body on screen with 20% padding
-        let max_dist = bodies
+        let mut dists: Vec<f64> = bodies
             .iter()
             .map(|b| {
                 let dx = b.pos[0] - com_x;
                 let dy = b.pos[1] - com_y;
                 (dx * dx + dy * dy).sqrt()
             })
-            .fold(0.1_f64, f64::max); // minimum 0.1 so it doesn't zoom in too close
+            .collect();
+        dists.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        let p90_index = (dists.len() as f64 * 0.9) as usize;
+        let view_scale = (dists[p90_index] * 1.5).max(0.1);
 
-        let view_scale = max_dist * 1.2;
+        self.draw_grid(com_x, com_y, view_scale);
 
         for body in bodies {
             let (sx, sy) = world_to_screen(body.pos[0] - com_x, body.pos[1] - com_y, view_scale);
