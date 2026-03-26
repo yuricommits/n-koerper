@@ -13,9 +13,17 @@ impl Simulation {
         let mut rng = rand::rng();
         let central_mass: f64 = rng.random_range(1e13..1e14); // Randomize the central heavy mass: 1×10¹³ → 1×10¹⁴
         let n_orbiting: usize = rng.random_range(2..=10); // Randomize number of orbiting bodies: 2–10
-        let mut bodies = vec![Body::new(0.0, 0.0, 0.0, 0.0, central_mass, [0.6, 0.0, 1.0])];
+        let mut bodies = vec![Body::new(
+            0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            central_mass,
+            [0.6, 0.0, 1.0],
+        )];
 
-        for _ in 0..n_orbiting {
+        for i in 1..=n_orbiting {
             let r: f64 = rng.random_range(0.03..0.18); // random distance from center
             let angle: f64 = rng.random_range(0.0..std::f64::consts::TAU); // random position on that orbit ring
             let x = r * angle.cos(); // polar → cartesian
@@ -37,7 +45,7 @@ impl Simulation {
                 rng.random_range(0.4..1.0_f32),
                 rng.random_range(0.4..1.0_f32),
             ];
-            bodies.push(Body::new(x, y, vx, vy, mass, color));
+            bodies.push(Body::new(i, x, y, vx, vy, mass, color));
         }
         Self { bodies }
     }
