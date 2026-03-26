@@ -1,4 +1,5 @@
 mod body;
+mod quadtree;
 mod renderer;
 mod sim;
 
