@@ -25,8 +25,8 @@ https://en.wikipedia.org/wiki/Henri_Poincaré
 Nature, 324, 446–449. The original paper introducing the quadtree-based approximation for n-body force computation.
 https://doi.org/10.1038/324446a0
 
-*Computer Science Department at Princeton University*
-COS 126 Programming Assignment: Barnes-Hut Galaxy Simulator
+**Computer Science Department at Princeton University**
+*COS 126 Programming Assignment: Barnes-Hut Galaxy Simulator*
 https://www.cs.princeton.edu/courses/archive/fall03/cs126/assignments/barnes-hut.html
 This assignment was developed by Tom Ventimiglia and Kevin Wayne.
 
