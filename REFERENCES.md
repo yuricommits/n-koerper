@@ -47,8 +47,13 @@ https://link.springer.com/book/10.1007/3-540-30666-8
 Overview of the semi-implicit Euler integrator used in this simulator.
 https://en.wikipedia.org/wiki/Semi-implicit_Euler_method
 
+**Hockney, R.W. & Eastwood, J.W. (1988)**
+*Computer Simulation Using Particles*
+Original treatment of the leapfrog/KDK integrator in the context of particle simulations.
+https://www.taylorfrancis.com/books/mono/10.1201/9780367806934
+
 **Wikipedia - Leapfrog integration**
-The next step up from symplectic Euler - better long-term energy conservation for orbital mechanics.
+Clear derivation of the KDK and DKD forms and their symplectic properties.
 https://en.wikipedia.org/wiki/Leapfrog_integration
 
 ---
