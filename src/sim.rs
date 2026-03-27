@@ -13,8 +13,8 @@ pub struct Simulation {
 impl Simulation {
     pub fn new() -> Self {
         let mut rng = rand::rng();
-        let central_mass: f64 = rng.random_range(1e12..1e13); // Randomize the central heavy mass: 1×10¹³ → 1×10¹⁴
-        let n_orbiting: usize = rng.random_range(100..=500); // Randomize number of orbiting bodies: 100–1000
+        let central_mass: f64 = rng.random_range(1e12..1e13); // Randomize the central heavy mass: 1×10¹² → 1×10¹³
+        let n_orbiting: usize = rng.random_range(100..=500); // Randomize number of orbiting bodies: 100–500
         let mut bodies = vec![Body::new(
             0,
             0.0,
@@ -40,7 +40,7 @@ impl Simulation {
             let vx = vx + rng.random_range(-5.0..5.0); // Small random perturbation so orbits aren't perfectly stable
             let vy = vy + rng.random_range(-5.0..5.0);
 
-            let mass: f64 = rng.random_range(1e11..5e12); // // Random small mass: 1×10¹¹ → 5×10¹²
+            let mass: f64 = rng.random_range(1e11..5e12); // Random small mass: 1×10¹¹ → 5×10¹²
 
             let color = [
                 rng.random_range(0.4..1.0_f32),
@@ -88,8 +88,12 @@ impl Simulation {
             tree.insert(body);
         }
 
+        // Precompute constants once per timestep
+        let softening_sq = SOFTENING * SOFTENING;
+        let theta_sq = THETA * THETA;
+
         for (i, body) in self.bodies.iter().enumerate() {
-            forces[i] = tree.compute_force(body, THETA, G, SOFTENING);
+            forces[i] = tree.compute_force(body, theta_sq, G, softening_sq);
         }
 
         let accels = forces; // rename mentally — these are already accelerations
