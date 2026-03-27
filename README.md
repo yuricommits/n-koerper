@@ -2,7 +2,8 @@
 
 A real-time n-body gravitational simulator written in Rust, implementing the Barnes-Hut algorithm for O(n log n) force computation. Bodies are randomly spawned with physically correct orbital velocities, rendered with per-body color and mass-scaled radius, and displayed in a live minifb window with a dynamic CoM-anchored grid.
 
-![n-körper screenshot](screenshot.png)
+![n-körper demo](demo.mp4)
+![n-körper image](image.png)
 
 ---
 
