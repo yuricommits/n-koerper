@@ -3,7 +3,7 @@ use crate::quadtree::{BoundingBox, QuadTree};
 use rand::RngExt;
 
 const G: f64 = 6.674e-11;
-const SOFTENING: f64 = 1e-3; // prevent infinite force when bodies overlap
+const SOFTENING: f64 = 5e-3; // prevent infinite force when bodies overlap
 const THETA: f64 = 0.5;
 
 pub struct Simulation {
@@ -26,14 +26,15 @@ impl Simulation {
         )];
 
         for i in 1..=n_orbiting {
-            let r: f64 = rng.random_range(0.03..0.18); // random distance from center
+            let r: f64 = rng.random_range(0.05..0.5); // random distance from center
             let angle: f64 = rng.random_range(0.0..std::f64::consts::TAU); // random position on that orbit ring
             let x = r * angle.cos(); // polar → cartesian
             let y = r * angle.sin();
 
             let v = (G * central_mass / r).sqrt(); // same orbital formula, but M and r vary
 
-            let direction: f64 = if rng.random_bool(0.5) { 1.0 } else { -1.0 };
+            // let direction: f64 = if rng.random_bool(0.5) { 1.0 } else { -1.0 }; // 50/50
+            let direction: f64 = 1.0; // CCW
             let vx = -direction * v * angle.sin(); // tangent to the orbit at this angle
             let vy = direction * v * angle.cos();
 
