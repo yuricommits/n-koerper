@@ -21,7 +21,7 @@ Rust stable is sufficient. No nightly features are used.
 
 ### Physics
 
-- **Leapfrog integrator** - replace symplectic Euler with a leapfrog (Störmer-Verlet) integrator for better long-term energy conservation
+- **Higher-order integrator** - the current KDK leapfrog is second-order. A fourth-order Yoshida or Ruth integrator would give even better energy conservation at the cost of more force evaluations per step
 - **Body merging** - detect collisions when two bodies overlap and merge them into a single body conserving mass and momentum
 - **3D extension** - extend positions and forces to three dimensions, adapting the quadtree to an octree
 
