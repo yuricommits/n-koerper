@@ -30,7 +30,7 @@ https://doi.org/10.1038/324446a0
 https://www.cs.princeton.edu/courses/archive/fall03/cs126/assignments/barnes-hut.html
 This assignment was developed by Tom Ventimiglia and Kevin Wayne.
 
-**Wikipedia — Barnes-Hut simulation**
+**Wikipedia - Barnes-Hut simulation**
 Accessible overview of the algorithm, quadtree construction, and the θ criterion with diagrams.
 https://en.wikipedia.org/wiki/Barnes–Hut_simulation
 
@@ -39,16 +39,16 @@ https://en.wikipedia.org/wiki/Barnes–Hut_simulation
 ## Numerical Integration
 
 **Hairer, E., Lubich, C., Wanner, G.**
-*Geometric Numerical Integration — Structure-Preserving Algorithms for Ordinary Differential Equations*
+*Geometric Numerical Integration - Structure-Preserving Algorithms for Ordinary Differential Equations*
 Reference for symplectic integrators and energy conservation properties of the leapfrog/Störmer-Verlet method.
 https://link.springer.com/book/10.1007/3-540-30666-8
 
-**Wikipedia — Symplectic Euler method**
+**Wikipedia - Symplectic Euler method**
 Overview of the semi-implicit Euler integrator used in this simulator.
 https://en.wikipedia.org/wiki/Semi-implicit_Euler_method
 
-**Wikipedia — Leapfrog integration**
-The next step up from symplectic Euler — better long-term energy conservation for orbital mechanics.
+**Wikipedia - Leapfrog integration**
+The next step up from symplectic Euler - better long-term energy conservation for orbital mechanics.
 https://en.wikipedia.org/wiki/Leapfrog_integration
 
 ---
@@ -60,11 +60,11 @@ https://en.wikipedia.org/wiki/Leapfrog_integration
 Cambridge University Press. Comprehensive treatment of n-body methods including softening, time step control, and regularization.
 https://www.cambridge.org/core/books/gravitational-nbody-simulations/
 
-**Wikipedia — N-body simulation**
+**Wikipedia - N-body simulation**
 General overview of n-body methods, complexity, and applications in astrophysics.
 https://en.wikipedia.org/wiki/N-body_simulation
 
-**Wikipedia — Gravitational N-body problem**
+**Wikipedia - Gravitational N-body problem**
 https://en.wikipedia.org/wiki/Gravitational_N-body_problem
 
 ---
@@ -80,11 +80,11 @@ https://iopscience.iop.org/article/10.1086/133493
 
 ## Orbital Mechanics
 
-**Wikipedia — Orbital speed**
+**Wikipedia - Orbital speed**
 Derivation of circular orbital velocity `v = sqrt(G * M / r)` used to initialize orbiting bodies.
 https://en.wikipedia.org/wiki/Orbital_speed
 
-**Wikipedia — Vis-viva equation**
+**Wikipedia - Vis-viva equation**
 General relationship between orbital speed and position for any conic orbit.
 https://en.wikipedia.org/wiki/Vis-viva_equation
 
@@ -93,7 +93,7 @@ https://en.wikipedia.org/wiki/Vis-viva_equation
 ## Rust and Dependencies
 
 **The Rust Programming Language**
-Comprehensive book on Rust — ownership, lifetimes, enums, and recursive data structures.
+Comprehensive book on Rust - ownership, lifetimes, enums, and recursive data structures.
 https://doc.rust-lang.org/book/
 
 **minifb**
@@ -108,10 +108,10 @@ https://docs.rs/rand
 
 ## Chaos Theory
 
-**Wikipedia — Chaos theory**
-Background on sensitive dependence on initial conditions — the mathematical foundation of why the three-body problem is non-integrable.
+**Wikipedia - Chaos theory**
+Background on sensitive dependence on initial conditions - the mathematical foundation of why the three-body problem is non-integrable.
 https://en.wikipedia.org/wiki/Chaos_theory
 
-**Wikipedia — Three-body problem**
+**Wikipedia - Three-body problem**
 History, special solutions (figure-eight orbit, Lagrange points), and the general non-integrability result.
 https://en.wikipedia.org/wiki/Three-body_problem
