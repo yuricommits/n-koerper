@@ -90,22 +90,6 @@ https://en.wikipedia.org/wiki/Vis-viva_equation
 
 ---
 
-## Rust and Dependencies
-
-**The Rust Programming Language**
-Comprehensive book on Rust - ownership, lifetimes, enums, and recursive data structures.
-https://doc.rust-lang.org/book/
-
-**minifb**
-Minimal framebuffer window library used for rendering.
-https://github.com/emoon/rust_minifb
-
-**rand**
-Random number generation crate used for body spawn randomization.
-https://docs.rs/rand
-
----
-
 ## Chaos Theory
 
 **Wikipedia - Chaos theory**
