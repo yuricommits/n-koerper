@@ -112,7 +112,7 @@ fn world_to_screen(x: f64, y: f64, view_scale: f64) -> (i32, i32) {
     (sx, sy)
 }
 
-fn draw_circle(buffer: &mut Vec<u32>, cx: i32, cy: i32, r: i32, color: u32) {
+fn draw_circle(buffer: &mut [u32], cx: i32, cy: i32, r: i32, color: u32) {
     for dy in -r..=r {
         for dx in -r..=r {
             if dx * dx + dy * dy <= r * r {
