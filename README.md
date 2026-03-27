@@ -133,16 +133,17 @@ Note that this computes **acceleration directly**, not force - dividing by `m_A`
 
 ### Numerical Integration
 
-This simulator uses the **symplectic Euler** (semi-implicit Euler) integrator:
-
+This simulator uses the **Kick-Drift-Kick (KDK) Leapfrog** integrator:
 ```
-vel += acceleration * dt
-pos += vel * dt
+half kick:  vel += accel * dt/2        (old forces)
+drift:      pos += vel * dt
+recompute forces at new positions
+half kick:  vel += accel * dt/2        (new forces)
 ```
 
-Velocity is updated before position. This is a first-order method - simple and fast, but accumulates energy error over time. For higher accuracy at a performance cost, a Leapfrog or Runge-Kutta 4 integrator could be substituted.
+Velocity and position are offset by half a timestep - they leapfrog over each other. This makes the integrator **time-reversible** and **symplectic**, meaning it conserves energy far better than symplectic Euler over long runs. Orbits neither spiral in nor drift out over thousands of frames.
 
-Numerical stability requires that bodies do not move more than a small fraction of their orbital radius per step. The simulation uses `DT = 1e-7` with `SUBSTEPS = 50` per frame - 50 physics steps per rendered frame.
+Forces are stored on the `Simulation` struct between steps so the tree is only rebuilt once per step, not twice - same computational cost as Euler with significantly better physics.
 
 ### Softening
 
