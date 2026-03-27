@@ -93,9 +93,14 @@ impl Simulation {
         let softening_sq = SOFTENING * SOFTENING;
         let theta_sq = THETA * THETA;
 
-        for (i, body) in self.bodies.iter().enumerate() {
-            forces[i] = tree.compute_force(body, theta_sq, G, softening_sq);
-        }
+        use rayon::prelude::*;
+
+        forces
+            .par_iter_mut()
+            .zip(self.bodies.par_iter())
+            .for_each(|(force, body)| {
+                *force = tree.compute_force(body, theta_sq, G, softening_sq);
+            });
 
         let accels = forces; // rename mentally — these are already accelerations
 
