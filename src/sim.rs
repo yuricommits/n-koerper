@@ -134,9 +134,18 @@ impl Simulation {
 }
 
 /*
-pair distance → gravitational force magnitude → force direction
-→ split force between both bodies (Newton 3rd)
-→ force / mass = acceleration
-→ acceleration * dt = velocity change
-→ velocity * dt = position change
- */
+Barnes-Hut KDK Leapfrog Integration:
+
+build quadtree from current positions
+→ compute accelerations via θ criterion (O(n log n))
+
+half kick:  vel += accel * dt/2        (old forces)
+drift:      pos += vel * dt
+rebuild quadtree at new positions
+→ recompute accelerations
+
+half kick:  vel += accel * dt/2        (new forces)
+
+subtract mass-weighted mean velocity   (CoM frame correction)
+*/
+
