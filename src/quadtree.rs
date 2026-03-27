@@ -146,14 +146,14 @@ impl QuadTree {
         }
     }
 
-    pub fn compute_force(&self, body: &Body, theta: f64, g: f64, softening: f64) -> [f64; 2] {
+    pub fn compute_force(&self, body: &Body, theta_sq: f64, g: f64, softening_sq: f64) -> [f64; 2] {
         match self {
             QuadTree::Empty(_) => [0.0, 0.0],
             QuadTree::Leaf { body: existing, .. } => {
                 if body.id == existing.id {
                     return [0.0, 0.0];
                 }
-                self.calculate_acceleration(body.pos, existing.pos, existing.mass, g, softening)
+                self.calculate_acceleration(body.pos, existing.pos, existing.mass, g, softening_sq)
             }
             QuadTree::Internal {
                 region,
@@ -163,30 +163,26 @@ impl QuadTree {
             } => {
                 let dx = center_of_mass[0] - body.pos[0];
                 let dy = center_of_mass[1] - body.pos[1];
-                let softening_sq = softening * softening;
                 let d_sq = dx * dx + dy * dy + softening_sq;
 
-                let s = region.half * 2.0;
+                let s_sq = region.half * region.half * 4.0;
 
-                let theta_sq = theta * theta;
-                let s_sq = s * s;
-                
                 // If (region_size)² < (opening_angle)² × (distance)²
                 // Then: use multipole approximation (single mass)
                 // Else: recurse into children (more detail)
-                
+
                 if s_sq < theta_sq * d_sq {
                     self.calculate_acceleration(
                         body.pos,
                         *center_of_mass,
                         *total_mass,
                         g,
-                        softening,
+                        softening_sq,
                     )
                 } else {
                     let mut total_force = [0.0_f64; 2];
                     for child in children.iter().flatten() {
-                        let f = child.compute_force(body, theta, g, softening);
+                        let f = child.compute_force(body, theta_sq, g, softening_sq);
                         total_force[0] += f[0];
                         total_force[1] += f[1];
                     }
@@ -201,13 +197,14 @@ impl QuadTree {
         pos_b: [f64; 2],
         mass_b: f64,
         g: f64,
-        softening: f64,
+        softening_sq: f64,
     ) -> [f64; 2] {
         let dx = pos_b[0] - pos_a[0];
         let dy = pos_b[1] - pos_a[1];
-        let dist2 = dx * dx + dy * dy + softening * softening;
-        let dist = dist2.sqrt(); // Pythagoras: dx² + dy²
-        let mag = g * mass_b / (dist2 * dist);
+
+        let dist_sq = dx * dx + dy * dy + softening_sq;
+        let dist_cu = dist_sq * dist_sq.sqrt(); // Pythagoras: dx² + dy²
+        let mag = (g * mass_b) / dist_cu;
 
         [dx * mag, dy * mag]
     }
