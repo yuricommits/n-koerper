@@ -163,11 +163,19 @@ impl QuadTree {
             } => {
                 let dx = center_of_mass[0] - body.pos[0];
                 let dy = center_of_mass[1] - body.pos[1];
-                let d = (dx * dx + dy * dy + softening * softening).sqrt();
+                let softening_sq = softening * softening;
+                let d_sq = dx * dx + dy * dy + softening_sq;
 
                 let s = region.half * 2.0;
 
-                if s / d < theta {
+                let theta_sq = theta * theta;
+                let s_sq = s * s;
+                
+                // If (region_size)² < (opening_angle)² × (distance)²
+                // Then: use multipole approximation (single mass)
+                // Else: recurse into children (more detail)
+                
+                if s_sq < theta_sq * d_sq {
                     self.calculate_acceleration(
                         body.pos,
                         *center_of_mass,
