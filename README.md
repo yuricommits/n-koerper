@@ -27,6 +27,8 @@ A real-time n-body gravitational simulator written in Rust, implementing the Bar
 - [Building and Running](#building-and-running)
 - [Controls](#controls)
 - [Dependencies](#dependencies)
+- [LICENSE](#license)
+- [References](#references)
 
 ---
 
@@ -281,3 +283,9 @@ Use `--release` for significantly better performance - debug builds are substant
 ## LICENSE
 
 MIT
+
+---
+
+## References
+
+This project is built on a foundation of classical mechanics, numerical methods, and computational physics. Full citations for all papers, books, and resources consulted during development are documented in [REFERENCES](REFERENCES.md).
