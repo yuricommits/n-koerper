@@ -8,6 +8,7 @@ const THETA: f64 = 0.5;
 
 pub struct Simulation {
     pub bodies: Vec<Body>,
+    forces: Vec<[f64; 2]>, // carried between steps
 }
 
 impl Simulation {
@@ -50,12 +51,42 @@ impl Simulation {
             ];
             bodies.push(Body::new(i, x, y, vx, vy, mass, color));
         }
-        Self { bodies }
+        let mut sim = Self {
+            bodies,
+            forces: vec![[0.0; 2]; n_orbiting + 1],
+        };
+        sim.forces = sim.build_and_compute_forces();
+        sim
     }
-    pub fn step(&mut self, dt: f64) {
-        let n = self.bodies.len();
-        let mut forces = vec![[0.0_f64; 2]; n];
 
+    pub fn step(&mut self, dt: f64) {
+        // Half kick - old forces
+        for (i, body) in self.bodies.iter_mut().enumerate() {
+            body.vel[0] += self.forces[i][0] * dt / 2.0;
+            body.vel[1] += self.forces[i][1] * dt / 2.0;
+        }
+        // Drift
+        for body in self.bodies.iter_mut() {
+            body.pos[0] += body.vel[0] * dt;
+            body.pos[1] += body.vel[1] * dt;
+        }
+        self.forces = self.build_and_compute_forces();
+        // Half kick - new forces
+        for (i, body) in self.bodies.iter_mut().enumerate() {
+            body.vel[0] += self.forces[i][0] * dt / 2.0;
+            body.vel[1] += self.forces[i][1] * dt / 2.0;
+        }
+        // After the integration loop - subtract mean velocity to keep system in CoM frame
+        let total_mass: f64 = self.bodies.iter().map(|b| b.mass).sum();
+        let mean_vx = self.bodies.iter().map(|b| b.vel[0] * b.mass).sum::<f64>() / total_mass;
+        let mean_vy = self.bodies.iter().map(|b| b.vel[1] * b.mass).sum::<f64>() / total_mass;
+        for body in self.bodies.iter_mut() {
+            body.vel[0] -= mean_vx;
+            body.vel[1] -= mean_vy;
+        }
+    }
+
+    fn build_and_compute_forces(&self) -> Vec<[f64; 2]> {
         let min_x = self
             .bodies
             .iter()
@@ -79,46 +110,26 @@ impl Simulation {
 
         let cx = (min_x + max_x) / 2.0;
         let cy = (min_y + max_y) / 2.0;
-        let half = ((max_x - min_x).max(max_y - min_y) / 2.0).max(0.1); // square + minimum size guard
+        let half = ((max_x - min_x).max(max_y - min_y) / 2.0).max(0.1);
 
         let bounds = BoundingBox { cx, cy, half };
-
-        // Build quadtree
         let mut tree = QuadTree::Empty(bounds);
         for body in &self.bodies {
             tree.insert(body);
         }
 
-        // Precompute constants once per timestep
         let softening_sq = SOFTENING * SOFTENING;
         let theta_sq = THETA * THETA;
 
         use rayon::prelude::*;
-
+        let mut forces = vec![[0.0_f64; 2]; self.bodies.len()];
         forces
             .par_iter_mut()
             .zip(self.bodies.par_iter())
             .for_each(|(force, body)| {
                 *force = tree.compute_force(body, theta_sq, G, softening_sq);
             });
-
-        let accels = forces; // rename mentally — these are already accelerations
-
-        for (i, body) in self.bodies.iter_mut().enumerate() {
-            body.vel[0] += accels[i][0] * dt; // no / body.mass
-            body.vel[1] += accels[i][1] * dt;
-            body.pos[0] += body.vel[0] * dt;
-            body.pos[1] += body.vel[1] * dt;
-        }
-
-        // After the integration loop — subtract mean velocity to keep system in CoM frame
-        let total_mass: f64 = self.bodies.iter().map(|b| b.mass).sum();
-        let mean_vx: f64 = self.bodies.iter().map(|b| b.vel[0] * b.mass).sum::<f64>() / total_mass;
-        let mean_vy: f64 = self.bodies.iter().map(|b| b.vel[1] * b.mass).sum::<f64>() / total_mass;
-        for body in self.bodies.iter_mut() {
-            body.vel[0] -= mean_vx;
-            body.vel[1] -= mean_vy;
-        }
+        forces
     }
 }
 
