@@ -148,4 +148,3 @@ half kick:  vel += accel * dt/2        (new forces)
 
 subtract mass-weighted mean velocity   (CoM frame correction)
 */
-
